@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./normalize.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./script.js"></script>
@@ -19,8 +23,47 @@
       <section class="section main__section">
         <form action="#" method="get" class="form">
           <div class="form__row">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" />
+            <label class="form__label" for="email">Электронная почта*</label>
+            <input class="form__input" id="email" name="email" type="email" />
+          </div>
+          <div class="form__row">
+            <label class="form__label" for="name">ФИО*</label>
+            <input class="form__input" id="name" name="name" type="text" />
+          </div>
+          <div class="form__row">
+            <label class="form__label" for="password">Пароль*</label>
+            <input
+              class="form__input"
+              id="password"
+              name="password"
+              type="password"
+            />
+          </div>
+          <div class="form__row">
+            <label class="form__label" for="password-confirm"
+              >Подтверждение пароля*</label
+            >
+            <input
+              class="form__input"
+              id="password-confirm"
+              name="password-confirm"
+              type="password"
+            />
+          </div>
+          <div class="form__row">
+            <label class="check" for="check">
+              Я подтверждаю, что хочу зарегистрироваться
+              <input
+                id="check"
+                class="check__input"
+                name="check"
+                type="checkbox"
+              />
+              <span class="check__box"></span>
+            </label>
+          </div>
+          <div class="form__row form__submit">
+            <button class="button">Отправить</button>
           </div>
         </form>
       </section>

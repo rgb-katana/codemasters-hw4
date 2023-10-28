@@ -13,12 +13,142 @@
 body {
   box-sizing: border-box;
 
-  /* Сделал это чтобы не резало глаза просто от белого фона */
-  background-color: black;
-  color: white;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 25px;
+
+  font-family: 'Montserrat', sans-serif;
+}
+
+.form {
+  background-color: #f2f2f7;
+  padding: 25px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  border-radius: 10px;
+}
+
+.form__row {
+  width: 256px;
+  min-height: 74px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.form__submit {
+  min-height: auto;
+}
+
+.form__label {
+  height: 15px;
+
+  font-size: 10px;
+  color: #586870;
+}
+
+.form__input {
+  height: 34px;
+  border-radius: 8px;
+  border: 0.5px solid #c0c6c9;
+  padding: 3px 8px 3px 8px;
+
+  font-size: 12px;
+}
+
+.form__input_error {
+  border: 0.5px solid #ff3d00;
+  background-color: #ffefef;
+}
+
+.form__input:focus {
+  border-radius: 8px;
+  outline: 0.5px solid #007aff;
+  caret-color: #007aff;
+  background-color: #e4f0ff;
+}
+
+/* Для будущих ошибок */
+.form__error {
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  font-size: 12px;
+  color: #ff3d00;
+}
+
+.check {
+  width: 256px;
+  background-color: #fff;
+
+  font-size: 12px;
+  padding: 8px;
+
+  border-radius: 8px;
+}
+
+.check__input {
+  /* Сделал так чтобы было рабочим и с IE 11 как в видео */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.check__box {
+  position: absolute;
+
+  margin-top: -0.6em;
+  margin-left: 7.6em;
+
+  width: 1.3em;
+  height: 1.3em;
+
+  border-radius: 0.2em;
+  background-color: white;
+  box-shadow: 0 0 0 0.1em #4a90e2;
+}
+
+.check__input:checked + .check__box {
+  background-color: #4a90e2;
+  background-image: url(images/check.svg);
+}
+
+.check__input:focus + .check__box {
+  box-shadow: 0 0 0 0.1em #4a90e2, 0 0 0 0.3em #7ed321;
+}
+
+.button {
+  transition: all 0.3s ease-in;
+
+  border-radius: 8px;
+  height: 34px;
+  outline: none;
+  border: 2px solid #c0c6c9;
+}
+
+.button:hover {
+  background-color: #a8df6e;
+  box-shadow: 0 0 0 0.1em #4a90e2;
+}
+
+.button:focus {
+  background-color: #a8df6e;
+  box-shadow: 0 0 0 0.1em #4a90e2, 0 0 0 0.3em #7ed321;
+}
+
+.button:active {
+  box-shadow: 0 0 0 0.4em #7ed321;
+  border: none;
+  background-color: #a8df6e;
 }

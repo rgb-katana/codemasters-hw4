@@ -1,0 +1,227 @@
+const emailInput = document.getElementById('email');
+const nameInput = document.getElementById('name');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('password-confirm');
+const checkboxInput = document.getElementById('check');
+
+const checkboxField = document.querySelector('.check');
+
+const sendButton = document.querySelector('.button');
+
+const form = document.querySelector('.form');
+
+form.addEventListener('click', function (e) {
+  if (e.target.classList.contains('form__input_error')) {
+    e.target.classList.remove('form__input_error');
+    e.target.nextSibling.remove();
+  }
+  if (e.target.classList.contains('check__input')) {
+    e.target.parentElement.classList.remove('form__input_error');
+    e.target.parentElement.nextSibling.remove();
+  }
+});
+
+function checkForMaxLengthError(length, maxLength) {
+  if (length > maxLength) {
+    return `Максимальный размер строки: ${maxLength}`;
+  }
+  return false;
+}
+
+function checkForMinLengthError(length, minLength) {
+  if (length < minLength) {
+    return `Минимальный размер строки: ${minLength}`;
+  }
+  return false;
+}
+
+/*
+ Так как в задании всего 2 случая, то есть либо содержать символ либо нет, 
+ я вписал просто строками какие ошибки должны возвращаться.
+*/
+function checkForRegexp(checkType = 'exact', expression, regExp) {
+  if (checkType === 'contains') {
+    if (!regExp.test(expression)) {
+      return 'Поле должно содержать как минимум 1 не буквенный символ';
+    }
+    return false;
+  } else {
+    if (!expression.match(regExp)) {
+      return 'Поле должно быть в формате xxx@xxx.xx';
+    }
+    return false;
+  }
+}
+
+function checkEmail() {
+  const regExpForEmail = new RegExp(/^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+$/);
+  const maxEmailLength = 100;
+  const errorMessageArray = [];
+
+  if (emailInput.value.trim() !== '') {
+    errorMessageArray.push(
+      checkForMaxLengthError(emailInput.value.length, maxEmailLength)
+    );
+    errorMessageArray.push(
+      checkForRegexp('exact', emailInput.value, regExpForEmail)
+    );
+  } else {
+    errorMessageArray.push('Поле обязательно для заполнения');
+  }
+
+  return errorMessageArray;
+}
+
+function checkName() {
+  const maxNameLength = 150;
+  const errorMessageArray = [];
+
+  if (nameInput.value.trim() !== '') {
+    errorMessageArray.push(
+      checkForMaxLengthError(nameInput.value.length, maxNameLength)
+    );
+  } else {
+    errorMessageArray.push('Поле обязательно для заполнения');
+  }
+
+  return errorMessageArray;
+}
+
+function checkPassword() {
+  const nonAlpha = new RegExp(/[^a-zA-Z]/);
+  const minPasswordLength = 8;
+  const maxPasswordLength = 30;
+
+  const errorMessageArray = [];
+
+  if (passwordInput.value.trim() !== '') {
+    errorMessageArray.push(
+      checkForMinLengthError(passwordInput.value.length, minPasswordLength)
+    );
+    errorMessageArray.push(
+      checkForMaxLengthError(passwordInput.value.length, maxPasswordLength)
+    );
+    errorMessageArray.push(
+      checkForRegexp('contains', passwordInput.value, nonAlpha)
+    );
+  } else {
+    errorMessageArray.push('Поле обязательно для заполнения');
+  }
+
+  return errorMessageArray;
+}
+
+function checkConfirmPassword() {
+  const errorMessageArray = [];
+
+  if (confirmPasswordInput.value.trim() === '') {
+    errorMessageArray.push('Поле обязательно для заполнения');
+  } else {
+    if (passwordInput.value !== confirmPasswordInput.value) {
+      errorMessageArray.push('Пароли должны совпадать!');
+    }
+    errorMessageArray.push(false);
+  }
+
+  return errorMessageArray;
+}
+
+function checkCheckbox() {
+  const errorMessageArray = [];
+
+  if (!checkboxInput.checked) {
+    errorMessageArray.push('Вы должны подтвердить регистрацию');
+  } else {
+    errorMessageArray.push(false);
+  }
+
+  return errorMessageArray;
+}
+
+function formatErrorMessageArray(errorMessageArray) {
+  return errorMessageArray.filter(element => element !== false);
+}
+
+sendButton.addEventListener('click', function (e) {
+  let canPass = true;
+  const errors = document.querySelectorAll('.form__error');
+  errors.forEach(element => {
+    element.remove();
+  });
+
+  e.preventDefault();
+
+  emailErrors = checkEmail();
+  nameErrors = checkName();
+  passwordErrors = checkPassword();
+  confirmPasswordErrors = checkConfirmPassword();
+  checkboxErrors = checkCheckbox();
+
+  if (formatErrorMessageArray(emailErrors).length !== 0) {
+    emailInput.classList.add('form__input_error');
+    canPass = false;
+
+    emailInput.insertAdjacentHTML(
+      'afterend',
+      `<p class="form__error">${formatErrorMessageArray(emailErrors).join(
+        ', '
+      )}</p>`
+    );
+  }
+
+  if (formatErrorMessageArray(nameErrors).length !== 0) {
+    nameInput.classList.add('form__input_error');
+    canPass = false;
+
+    nameInput.insertAdjacentHTML(
+      'afterend',
+      `<p class="form__error">${formatErrorMessageArray(nameErrors).join(
+        ', '
+      )}</p>`
+    );
+  }
+
+  if (formatErrorMessageArray(passwordErrors).length !== 0) {
+    passwordInput.classList.add('form__input_error');
+    canPass = false;
+
+    passwordInput.insertAdjacentHTML(
+      'afterend',
+      `<p class="form__error">${formatErrorMessageArray(passwordErrors).join(
+        ', '
+      )}</p>`
+    );
+  }
+
+  if (formatErrorMessageArray(confirmPasswordErrors).length !== 0) {
+    confirmPasswordInput.classList.add('form__input_error');
+    canPass = false;
+
+    confirmPasswordInput.insertAdjacentHTML(
+      'afterend',
+      `<p class="form__error">${formatErrorMessageArray(
+        confirmPasswordErrors
+      ).join(', ')}</p>`
+    );
+  }
+
+  if (formatErrorMessageArray(checkboxErrors).length !== 0) {
+    checkboxField.classList.add('form__input_error');
+    canPass = false;
+
+    checkboxField.insertAdjacentHTML(
+      'afterend',
+      `<p class="form__error">${formatErrorMessageArray(checkboxErrors).join(
+        ', '
+      )}</p>`
+    );
+  }
+
+  if (canPass) {
+    localStorage.setItem('email', emailInput.value);
+    localStorage.setItem('name', nameInput.value);
+    localStorage.setItem('password', passwordInput.value);
+    form.insertAdjacentHTML('afterend', `<h2>Вы создали аккаунт!</h2>`);
+    form.remove();
+  }
+});
