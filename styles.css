@@ -1,0 +1,24 @@
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+.header {
+  text-align: center;
+}
+
+body {
+  box-sizing: border-box;
+
+  /* Сделал это чтобы не резало глаза просто от белого фона */
+  background-color: black;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
