@@ -15,7 +15,10 @@ form.addEventListener('click', function (e) {
     e.target.classList.remove('form__input_error');
     e.target.nextSibling.remove();
   }
-  if (e.target.classList.contains('check__input')) {
+  if (
+    e.target.classList.contains('check__input') &&
+    e.target.parentElement.classList.contains('form__input_error')
+  ) {
     e.target.parentElement.classList.remove('form__input_error');
     e.target.parentElement.nextSibling.remove();
   }
@@ -39,22 +42,32 @@ function checkForMinLengthError(length, minLength) {
  Так как в задании всего 2 случая, то есть либо содержать символ либо нет, 
  я вписал просто строками какие ошибки должны возвращаться.
 */
-function checkForRegexp(checkType = 'exact', expression, regExp) {
-  if (checkType === 'contains') {
-    if (!regExp.test(expression)) {
+function checkForFormat(type, expression) {
+  if (type === 'password') {
+    let validatorScore = validator.isStrongPassword(expression, {
+      minLength: 8,
+      minNumbers: 1,
+      minSymbols: 1,
+      returnScore: true,
+      pointsForContainingLower: 0,
+      pointsForContainingUpper: 0,
+      pointsForContainingNumber: 10,
+      pointsForContainingSymbol: 10,
+    });
+
+    if (validatorScore <= 8) {
       return 'Поле должно содержать как минимум 1 не буквенный символ';
     }
+
     return false;
   } else {
-    if (!expression.match(regExp)) {
-      return 'Поле должно быть в формате xxx@xxx.xx';
-    }
-    return false;
+    return validator.isEmail(expression)
+      ? false
+      : 'Поле должно быть в формате xxx@xxx.xx';
   }
 }
 
 function checkEmail() {
-  const regExpForEmail = new RegExp(/^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+$/);
   const maxEmailLength = 100;
   const errorMessageArray = [];
 
@@ -62,9 +75,7 @@ function checkEmail() {
     errorMessageArray.push(
       checkForMaxLengthError(emailInput.value.length, maxEmailLength)
     );
-    errorMessageArray.push(
-      checkForRegexp('exact', emailInput.value, regExpForEmail)
-    );
+    errorMessageArray.push(checkForFormat('email', emailInput.value));
   } else {
     errorMessageArray.push('Поле обязательно для заполнения');
   }
@@ -88,7 +99,6 @@ function checkName() {
 }
 
 function checkPassword() {
-  const nonAlpha = new RegExp(/[^a-zA-Z]/);
   const minPasswordLength = 8;
   const maxPasswordLength = 30;
 
@@ -101,9 +111,7 @@ function checkPassword() {
     errorMessageArray.push(
       checkForMaxLengthError(passwordInput.value.length, maxPasswordLength)
     );
-    errorMessageArray.push(
-      checkForRegexp('contains', passwordInput.value, nonAlpha)
-    );
+    errorMessageArray.push(checkForFormat('password', passwordInput.value));
   } else {
     errorMessageArray.push('Поле обязательно для заполнения');
   }
@@ -142,6 +150,17 @@ function formatErrorMessageArray(errorMessageArray) {
   return errorMessageArray.filter(element => element !== false);
 }
 
+function insertErrorMessageHTML(inputType, errorArray) {
+  inputType.classList.add('form__input_error');
+
+  inputType.insertAdjacentHTML(
+    'afterend',
+    `<p class="form__error">${formatErrorMessageArray(errorArray).join(
+      ', '
+    )}</p>`
+  );
+}
+
 sendButton.addEventListener('click', function (e) {
   let canPass = true;
   const errors = document.querySelectorAll('.form__error');
@@ -158,63 +177,28 @@ sendButton.addEventListener('click', function (e) {
   checkboxErrors = checkCheckbox();
 
   if (formatErrorMessageArray(emailErrors).length !== 0) {
-    emailInput.classList.add('form__input_error');
+    insertErrorMessageHTML(emailInput, emailErrors);
     canPass = false;
-
-    emailInput.insertAdjacentHTML(
-      'afterend',
-      `<p class="form__error">${formatErrorMessageArray(emailErrors).join(
-        ', '
-      )}</p>`
-    );
   }
 
   if (formatErrorMessageArray(nameErrors).length !== 0) {
-    nameInput.classList.add('form__input_error');
+    insertErrorMessageHTML(nameInput, nameErrors);
     canPass = false;
-
-    nameInput.insertAdjacentHTML(
-      'afterend',
-      `<p class="form__error">${formatErrorMessageArray(nameErrors).join(
-        ', '
-      )}</p>`
-    );
   }
 
   if (formatErrorMessageArray(passwordErrors).length !== 0) {
-    passwordInput.classList.add('form__input_error');
+    insertErrorMessageHTML(passwordInput, passwordErrors);
     canPass = false;
-
-    passwordInput.insertAdjacentHTML(
-      'afterend',
-      `<p class="form__error">${formatErrorMessageArray(passwordErrors).join(
-        ', '
-      )}</p>`
-    );
   }
 
   if (formatErrorMessageArray(confirmPasswordErrors).length !== 0) {
-    confirmPasswordInput.classList.add('form__input_error');
+    insertErrorMessageHTML(confirmPasswordInput, confirmPasswordErrors);
     canPass = false;
-
-    confirmPasswordInput.insertAdjacentHTML(
-      'afterend',
-      `<p class="form__error">${formatErrorMessageArray(
-        confirmPasswordErrors
-      ).join(', ')}</p>`
-    );
   }
 
   if (formatErrorMessageArray(checkboxErrors).length !== 0) {
-    checkboxField.classList.add('form__input_error');
+    insertErrorMessageHTML(checkboxField, checkboxErrors);
     canPass = false;
-
-    checkboxField.insertAdjacentHTML(
-      'afterend',
-      `<p class="form__error">${formatErrorMessageArray(checkboxErrors).join(
-        ', '
-      )}</p>`
-    );
   }
 
   if (canPass) {
